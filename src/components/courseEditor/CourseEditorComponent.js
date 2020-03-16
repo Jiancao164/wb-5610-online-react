@@ -9,9 +9,11 @@ import lessons from '../../reducers/lessons'
 import widgets from '../../reducers/widgetReducer'
 import ModuleListContainer from "../../containers/ModuleListContaner";
 import WidgetList from "./WidgetList";
+import TopicPills from "./TopicPills";
+import topics from "../../reducers/topics";
 
 const reducers = combineReducers({
-    modules, lessons, widgets
+    modules, lessons, widgets, topics
 })
 
 const store = createStore(reducers)
@@ -37,9 +39,20 @@ const CourseEditorComponent = ({hideEditor, match, courseId, moduleId, lessonId,
                 </div>
                 <div className="col-9">
                     <LessonTabs
+                        courseId={courseId}
+                        history={history}
                         moduleId={moduleId}/>
-                    {/*<TopicPills/>*/}
+                    <TopicPills
+                        courseId={courseId}
+                        history={history}
+                        moduleId={moduleId}
+                        lessonId={lessonId}
+                    />
                     <WidgetList
+                        courseId={courseId}
+                        history={history}
+                        moduleId={moduleId}
+                        lessonId={lessonId}
                         topicId={topicId}/>
                 </div>
             </div>

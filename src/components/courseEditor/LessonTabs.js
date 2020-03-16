@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {LESSONS_API_URL, MODULES_LESSONS_API_URL} from "../../common/constants";
 import {updateLesson} from "../../services/LessonService";
+import ModuleListItem from "./ModuleListItem";
 
 class LessonTabs extends React.Component {
 
@@ -15,8 +16,9 @@ class LessonTabs extends React.Component {
         }
     }
 
+
     state = {
-        selectedLessonId: '',
+        selectedLessonId: "qq",
         editingLessonId: '',
         lesson: {
             title: '',
@@ -24,17 +26,36 @@ class LessonTabs extends React.Component {
         }
     }
 
+    edit=(lesson) => {
+    const lessonId = lesson._id
+    this.props.history.push(`/course-editor/${this.props.courseId}/module/${this.props.moduleId}/lesson/${lessonId}`)
+    this.setState({
+    editingModuleId: module._id
+    })
+    }
+
+    select = (lesson) => {
+        const lessonId = lesson._id
+        console.log(lesson._id)
+        this.props.history.push(`/course-editor/${this.props.courseId}/module/${this.props.moduleId}/lesson/${lessonId}`)
+        this.setState({
+            selectedLessonId: lesson._id
+        })
+    }
+
+    // editing={module._id === this.state.editingModuleId}
+
+
     render() {
         return(
-            <ul className="nav nav-tabs">
+            <ul className="nav nav-tabs active">
                 {
                     this.props.lessons && this.props.lessons.map(lesson =>
-                        <li className={`nav-item`}
-                            onClick={() => this.setState({
-                                selectedLessonId: lesson._id
-                            })}
-                            key={lesson._id}>
-                            <a className={`nav-link
+                        <li className={`nav-item `}
+                            onClick={() => {this.select(lesson) } }
+                            key={lesson._id} >
+                            {console.log(this.state.selectedLessonId)}
+                            <a className={`nav-link ${console.log(this.state.selectedLessonId === lesson._id)}
                                             ${(this.state.editingLessonId === lesson._id || this.state.selectedLessonId === lesson._id)?'active':''}`}>
                                 {this.state.editingLessonId !== lesson._id &&
                                 <span>{lesson.title}</span>}

@@ -15,7 +15,8 @@ class WidgetList extends React.Component {
         editingWidgetId: '',
         widget: {
             id: ''
-        }
+        },
+        widgetType: ""
     }
     componentDidMount() {
         this.props.findWidgetsForTopic(this.props.topicId);
@@ -28,21 +29,48 @@ class WidgetList extends React.Component {
         }
     }
 
-    saveWidget = (widget) => {
+    changeWidgetType = (type) => {
+
+        this.setState({
+            widgetType: type
+
+        })
+        console.log(this.state.widgetType)
+    }
+
+    saveWidget = (widgetId, widget) => {
         this.setState({
             editingWidgetId: ''
         })
-        this.props.updateWidget(widget.id, widget)
+        {console.log(this.state.editingWidgetId)}
+        this.props.updateWidget(widgetId, widget)
     }
 
     render(){
         return(
             <div>
-                {
-                    this.props.widgets && this.props.widgets.map(widget =>
+
+            <div>
+                {this.props.widgets && this.props.widgets.map(widget =>
                         <div key={widget.id}>
-                            {widget.type === "HEADING"   && <HeadingWidget   saveWidget={this.saveWidget} editing={this.state.widget.id === widget.id} {...this.props} widget={widget}/>}
-                            {widget.type === "PARAGRAPH" && <ParagraphWidget updateWidget={this.updateWidget} editing={this.state.widget.id === widget.id} widget={widget}/>}
+                            {widget.type === "HEADING" &&
+                            <HeadingWidget
+                                updateWidget = {this.updateWidget}
+                                saveWidget={this.saveWidget}
+                                editingWidgetId = {this.state.editingWidgetId}
+                                editing={this.state.editingWidgetId === widget.id}
+                                deleteWidget={this.props.deleteWidget}
+                                {...this.props}
+                                widget={widget}/>}
+                            {widget.type === "PARAGRAPH" &&
+                            <ParagraphWidget
+                                updateWidget={this.updateWidget}
+                                saveWidget={this.saveWidget}
+                                editingWidgetId = {this.state.editingWidgetId}
+                                editing={this.state.editingWidgetId === widget.id}
+                                deleteWidget={this.props.deleteWidget}
+                                {...this.props}
+                                widget={widget}/>}
                             <span>
                                 {   this.state.editingWidgetId !== widget.id &&
                                     <button onClick={
@@ -53,46 +81,19 @@ class WidgetList extends React.Component {
                                         Edit
                                     </button>
                                 }
-                                {   this.state.editingWidgetId === widget.id &&
-                                    <span>
-                                        <button onClick={() => {
-                                            this.props.deleteWidget(widget.id)
-                                        }}>
-                                            Delete
-                                        </button>
-                                        <button>Up</button>
-                                        <button>Down</button>
-                                        <select onChange={(e) => {
-                                            const newType = e.target.value
-                                            this.setState(prevState => {
-                                                this.state.widget.type = newType;
-                                                return {
-                                                    widget: {
-                                                        ...widget, type: newType
-                                                    }
-                                            }})
-                                            this.props.updateWidget(this.state.widget.id, this.state.widget)
-                                        }}
-                                                value={this.state.widget.type}>
-                                            <option value="HEADING">Heading</option>
-                                            <option value="PARAGRAPH">Paragraph</option>
-                                            <option value="YOUTUBE">YouTube</option>
-                                            <option value="HTML">HTML</option>
-                                        </select>
-                                    </span>
-                                }
                             </span>
                         </div>
                     )
                 }
                 <div>
-                    <button
-                        onClick={
-                            () =>
-                            this.props.createWidget(this.props.topicId)}>
-                        Create Widget
-                    </button>
+                    <i onClick={
+                        () =>
+                            this.props.createWidget(this.props.topicId)}
+                       className="fas fa-plus-circle fa-2x float-right"/>
+                    <br/>
+
                 </div>
+            </div>
             </div>
         )
     }
@@ -112,7 +113,7 @@ const dispatchToPropertyMapper = (dispatcher) => ({
     updateWidget: (widgetId, newWidget) =>
         updateWidget(widgetId, newWidget)
             .then(status => dispatcher({
-                type: "UPDATE",
+                type: "UPDATE_WIDGET",
                 widget: newWidget
             })),
     deleteWidget: (widgetId) =>
@@ -122,13 +123,12 @@ const dispatchToPropertyMapper = (dispatcher) => ({
                 widgetId: widgetId
             })),
     createWidget: (topicId) =>
-        createWidget({
+        createWidget(topicId, {
             title: "New Widget",
             type: "HEADING",
             topicId: topicId,
             id: (new Date()).getTime() + ""
-        })
-            .then(actualWidget => dispatcher({
+        }).then(actualWidget => dispatcher({
                 type: "ADD_WIDGET",
                 widget: actualWidget
             })),
