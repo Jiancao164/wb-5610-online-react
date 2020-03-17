@@ -18,7 +18,7 @@ const reducers = combineReducers({
 
 const store = createStore(reducers)
 
-const CourseEditorComponent = ({hideEditor, match, courseId, moduleId, lessonId, topicId, history}) =>
+const CourseEditorComponent = ({hideEditor, match, courseId, moduleId, lessonId, topicId, widgetId, history}) =>
     <Provider store={store}>
         <div>
             <button onClick={() => {
@@ -48,12 +48,16 @@ const CourseEditorComponent = ({hideEditor, match, courseId, moduleId, lessonId,
                         moduleId={moduleId}
                         lessonId={lessonId}
                     />
+                    {console.log(topicId)}
+                    {topicId &&
                     <WidgetList
                         courseId={courseId}
                         history={history}
                         moduleId={moduleId}
                         lessonId={lessonId}
-                        topicId={topicId}/>
+                        topicId={topicId}
+                        widgetId={widgetId}/>}
+
                 </div>
             </div>
         </div>

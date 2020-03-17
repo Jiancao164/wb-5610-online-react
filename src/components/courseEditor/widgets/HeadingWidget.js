@@ -5,7 +5,9 @@ class HeadingWidget extends React.Component {
         editing: this.props.editing,
         widget: this.props.widget,
         value: this.props.widget.type,
-        preview: false
+        preview: false,
+        text: this.props.widget.text,
+        textItems: []
     };
     change = (e) => {
         this.setState({value : e.target.value})
@@ -49,7 +51,10 @@ class HeadingWidget extends React.Component {
                                     onClick={this.changePreview}
                                     className="fas fa-toggle-on float-right fa-2x">Preview</i>}
                                 {!this.state.preview && <i
-                                    onClick={this.changePreview}
+                                    onClick={() => {this.changePreview();
+                                        this.setState({
+                                        textItems: this.state.text.split("\n")
+                                    })}}
                                     className="fas fa-toggle-off float-right fa-2x">Preview</i>}
                                 <button onClick={() =>
                                 {
@@ -87,6 +92,8 @@ class HeadingWidget extends React.Component {
                                         >
                                             <option value="HEADING">Heading</option>
                                             <option value="PARAGRAPH">Paragraph</option>
+                                            <option value="LIST">List</option>
+                                            <option value="IMAGE">Image</option>
                                         </select>
                                         <i onClick={() => this.props.deleteWidget(this.props.widget.id)} className="fas fa-window-close fa-3x"/>
                                         <br/>
@@ -94,7 +101,15 @@ class HeadingWidget extends React.Component {
                                 </div>
 
                                 <div>
-                                    <input type="text" className="form-control"
+                                    <input type="text"
+                                           onChange={(e) => {
+                                               this.setState({
+                                                   text: e.target.value
+                                               })
+                                           }
+                                           }
+                                           value={this.state.text}
+                                           className="form-control"
                                            placeholder={"Heading text"}
                                            aria-label="Text input with segmented dropdown button"/>
                                     <br/>
@@ -134,8 +149,19 @@ class HeadingWidget extends React.Component {
                              }
                             {this.state.preview &&
                             <div>
-                                {<h3>{this.props.widget.title}</h3>}
-                                <h5>{this.props.widget.text}</h5>
+                                {this.props.widget.size === 1 && <h1>{this.props.widget.title}</h1>}
+                                {this.props.widget.size === 2 && <h2>{this.props.widget.title}</h2>}
+                                {this.props.widget.size === 3 && <h3>{this.props.widget.title}</h3>}
+                                {this.props.widget.size === 4 && <h4>{this.props.widget.title}</h4>}
+                                {this.props.widget.size === 5 && <h5>{this.props.widget.title}</h5>}
+                                {this.props.widget.size === 6 && <h6>{this.props.widget.title}</h6>}
+                                {
+                                    <ul>
+                                        {this.state.textItems.map(item => (
+                                            <li key={new Date().getTime() + item}>{item}</li>
+                                        ))}
+                                    </ul>
+                                }
                             </div>
                             }
                         </div>

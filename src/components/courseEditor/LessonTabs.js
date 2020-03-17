@@ -49,6 +49,7 @@ class LessonTabs extends React.Component {
     render() {
         return(
             <ul className="nav nav-tabs active">
+                {console.log("999999999")}
                 {
                     this.props.lessons && this.props.lessons.map(lesson =>
                         <li className={`nav-item `}

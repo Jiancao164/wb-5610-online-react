@@ -5,7 +5,9 @@ class ParagraphWidget extends React.Component {
         editing: this.props.editing,
         widget: this.props.widget,
         value: this.props.widget.type,
-        preview: false
+        preview: false,
+        text: this.props.widget.text,
+        textItems: []
     };
 
     changePreview = () => {
@@ -40,7 +42,10 @@ class ParagraphWidget extends React.Component {
                                 onClick={this.changePreview}
                                 className="fas fa-toggle-on float-right fa-2x">Preview</i>}
                             {!this.state.preview && <i
-                                onClick={this.changePreview}
+                                onClick={() => {this.changePreview();
+                                    this.setState({
+                                        textItems: this.state.text.split("\n")
+                                    })}}
                                 className="fas fa-toggle-off float-right fa-2x">Preview</i>}
                             <button onClick={() =>
                             {
@@ -69,12 +74,14 @@ class ParagraphWidget extends React.Component {
                                                         prevState.widget.type = newType
                                                         return prevState
                                                     })
-                                                    //this.props.updateWidget(this.state.widget.id, this.state.widget);
+                                                    this.props.updateWidget(this.state.widget.id, this.state.widget);
                                                 }}
                                                 value={this.props.widget.type}
                                         >
                                             <option value="HEADING">Heading</option>
                                             <option value="PARAGRAPH">Paragraph</option>
+                                            <option value="LIST">List</option>
+                                            <option value="IMAGE">Image</option>
                                         </select>
                                         <i onClick={() => this.props.deleteWidget(this.props.widget.id)} className="fas fa-window-close fa-3x"/>
                                         <br/>
@@ -84,6 +91,13 @@ class ParagraphWidget extends React.Component {
                                 <div>
                             <textarea className="form-control"
                                       placeholder={"Paragraph text"}
+                                      onChange={(e) => {
+                                          this.setState({
+                                              text: e.target.value
+                                          })
+                                      }
+                                      }
+                                      value={this.state.text}
                                       aria-label="Text input with segmented dropdown button"/>
                                     <br/>
 
@@ -106,8 +120,14 @@ class ParagraphWidget extends React.Component {
                         }
                         {this.state.preview &&
                         <div>
-                            {<h3>{this.props.widget.title}</h3>}
-                            <h5>{this.props.widget.text}</h5>
+                            {<h3>{this.state.widget.title}</h3>}
+                            {
+                                <ul>
+                                    {this.state.textItems.map(item => (
+                                        <li key={new Date().getTime() + item}>{item}</li>
+                                    ))}
+                                </ul>
+                            }
                         </div>
                         }
                     </div>

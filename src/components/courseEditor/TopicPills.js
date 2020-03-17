@@ -38,8 +38,8 @@ class TopicPills extends React.Component {
     }
 
     select = (topic) => {
-        const topicId = topic._id
-        console.log(topic._id)
+        const topicId = topic.id
+        console.log(topic.id)
         this.props.history.push(`/course-editor/${this.props.courseId}/module/${this.props.moduleId}/lesson/${this.props.lessonId}/topic/${topicId}`)
         this.setState({
             selectedTopicId: topic._id
@@ -133,7 +133,7 @@ const dispatcherToPropertyMapper = (dispatcher) => ({
     addTopic: (lessonId) =>
         fetch(LESSONS_TOPICS_API_URL(lessonId), {
             method: 'POST',
-            body: JSON.stringify({title: 'New Topic'}),
+            body: JSON.stringify({title: 'New Topic', id: (new Date()).getSeconds()}),
             headers: {
                 'content-type': 'application/json'
             }

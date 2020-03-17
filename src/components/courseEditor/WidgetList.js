@@ -9,6 +9,8 @@ import {
     updateWidget,
     findWidgetsForTopic
 } from "../../services/WidgetService";
+import ListWidget from "./widgets/ListWidget";
+import ImageWidget from "./widgets/ImageWidget";
 
 class WidgetList extends React.Component {
     state = {
@@ -19,6 +21,7 @@ class WidgetList extends React.Component {
         widgetType: ""
     }
     componentDidMount() {
+        {console.log(this.props.topicId)}
         this.props.findWidgetsForTopic(this.props.topicId);
         // this.props.findAllWidgets();
     }
@@ -49,8 +52,8 @@ class WidgetList extends React.Component {
     render(){
         return(
             <div>
-
             <div>
+                {console.log(this.props.widgets)}
                 {this.props.widgets && this.props.widgets.map(widget =>
                         <div key={widget.id}>
                             {widget.type === "HEADING" &&
@@ -71,17 +74,48 @@ class WidgetList extends React.Component {
                                 deleteWidget={this.props.deleteWidget}
                                 {...this.props}
                                 widget={widget}/>}
-                            <span>
+                            {widget.type === "LIST" &&
+                            <ListWidget
+                                updateWidget={this.updateWidget}
+                                saveWidget={this.saveWidget}
+                                editingWidgetId = {this.state.editingWidgetId}
+                                editing={this.state.editingWidgetId === widget.id}
+                                deleteWidget={this.props.deleteWidget}
+                                {...this.props}
+                                widget={widget}/>}
+                            {widget.type === "IMAGE" &&
+                            <ImageWidget
+                                updateWidget={this.updateWidget}
+                                saveWidget={this.saveWidget}
+                                editingWidgetId = {this.state.editingWidgetId}
+                                editing={this.state.editingWidgetId === widget.id}
+                                deleteWidget={this.props.deleteWidget}
+                                {...this.props}
+                                widget={widget}/>}
+                            {
+                                widget &&
+                                <span>
                                 {   this.state.editingWidgetId !== widget.id &&
-                                    <button onClick={
-                                        () => this.setState({
+                                <button onClick={
+                                    () => {this.setState({
                                         editingWidgetId: widget.id,
                                         widget: widget
-                                    })}>
-                                        Edit
-                                    </button>
+
+                                    });
+                                        console.log(this.props.topicId)
+                                    console.log(widget.id)
+                                    // this.props.history.push(`/course-editor/${this.props.courseId}/module/
+                                    // ${this.props.moduleId}/lesson/${this.props.lessonId}/topic/
+                                    // ${this.props.topicId}/widget/${widget.id}`)
+                                    }
+                                    }>
+                                    Edit
+                                </button>
+
                                 }
                             </span>
+                            }
+
                         </div>
                     )
                 }
@@ -126,8 +160,12 @@ const dispatchToPropertyMapper = (dispatcher) => ({
         createWidget(topicId, {
             title: "New Widget",
             type: "HEADING",
+            src: "",
+            size: "1",
+            height: "1",
+            widget: "1",
             topicId: topicId,
-            id: (new Date()).getTime() + ""
+            id: (new Date()).getMilliseconds()
         }).then(actualWidget => dispatcher({
                 type: "ADD_WIDGET",
                 widget: actualWidget
